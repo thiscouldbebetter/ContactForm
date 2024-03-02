@@ -2,32 +2,72 @@
 <body>
 
 	<?php
-		if (isset($_POST["MessageText"]) == false)
+
+		include("MessageEmailAddressToSendTo.php");
+
+		$messageSenderEmailAddress = $_POST["MessageSenderEmailAddress"];
+		$messageShouldBeSentToSenderAsWell =
+			isset($_POST["MessageShouldBeSentToSenderAsWell"]);
+		$messageText = $_POST["MessageText"];
+
+		$postVariablesAreSet =
+			$messageSenderEmailAddress != ""
+			&& ($messageText != "");
+
+		if ($postVariablesAreSet == false)
 		{
-			echo "<pre>" . wordwrap("MessageText not set!") . "</pre>";
+			echo
+				"<p>"
+				. "Error: The required information was not set!  "
+				. "Message text and a return email address must be specified."
+				. "</p>";
+		}
+		else if ($emailAddressToSendTo == "test@test.test")
+		{
+			echo
+				"<p>"
+				. "Error: The emailAddressToSendTo variable "
+				. "is not configured in MessageEmailAddressToSendTo.php!"
+				. "</p>";
 		}
 		else
 		{
-			$messageTextEntered = $_POST["MessageText"];
+			$headers = array
+			(
+				"Reply-To" => $messageSenderEmailAddress
+			);
 
-			$emailAddressToSendTo = "test@test.test";
+			$messageSubject = "Contact Form Message from " . $messageSenderEmailAddress;
 
 			$wasMailSentSuccessfully = mail
 			(
 				$emailAddressToSendTo,
-				"Contact Form Message", // subject
-				$messageTextEntered
+				$messageSubject,
+				$messageText,
+				$headers
 			);
+
+			if ($messageShouldBeSentToSenderAsWell)
+			{
+				$wasMailSentSuccessfully = mail
+				(
+					$messageSenderEmailAddress,
+					$messageSubject,
+					$messageText,
+					$headers
+				);
+			}
 
 			$statusMessage =
 				$wasMailSentSuccessfully
 				? "The message was sent successfully!"
 				: "An error occurred while sending the message.";
-		
-			echo "<pre>" . wordwrap($statusMessage) . "</pre>";
-		}
 
+			echo "<p>" . $statusMessage . "</p>";
+		}
 	?>
+
+	<a href="MessageCompose.php">Send another message</a>
 
 </body>
 </html>

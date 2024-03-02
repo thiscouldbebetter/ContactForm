@@ -7,7 +7,7 @@ A simple web contact form to allow visitors to send an email to a contact addres
 
 To see it in action:
 
-	1. Open the file MessageSend.php in a text editor.
+	1. Open the file MessageEmailAddressToSendTo.php in a text editor.
 	2. Change the value assigned to the $emailAddressToSend variable.
 	3. Save.
 	4. Copy the contents of the Source directory to the desired location on a web server that runs PHP.
